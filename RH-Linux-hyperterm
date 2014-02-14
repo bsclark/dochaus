@@ -1,0 +1,3 @@
+Connect to a serial port console via
+
+cu -l /dev/ttyS0 -s 19200 |tee capture.txtUntitled 1

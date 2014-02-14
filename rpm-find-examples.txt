@@ -1,0 +1,27 @@
+rpm -q --whatprovides FILES_TO_SEARCH_FOR
+
+Other Usefull rpm commands
+
+Submitted by Rui Lapa (not verified) on Wed, 10/15/2008 - 18:21.
+Same as:
+rpm -qlp RPMS-TO-SEARCH | \
+grep FILE-TO-SEARCH-FOR
+
+q - query
+l - list files
+p - packages
+
+Good ones are:
+--------------
+
+1. Find the rpm which FILE (path/filename) belongs to
+rpm -qf FILE
+
+2. Verify rpm files (changes, MD5, permissions, owner, ...)
+rpm -qV RPM_PACKAGE_NAME
+
+3. List packages ordered by SIZE
+rpm -qa --qf "%{SIZE} %{NAME}\n" | sort -n
+
+4. Repackage OLD files (make rollback rpm) when upgrading an rpm
+rpm --repackage -Uvh NEW_RPM_PACKAGE

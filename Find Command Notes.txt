@@ -1,0 +1,26 @@
+find /backups/db_backups -type f -mtime +60 -ls -exec rm -f {} \;
+
+This will find only files older thatn 60 days and "ls -ail" them and then delete them from the system as well.
+
+find /backups/db_backups -type f -mtime +60 -ls -delete 
+
+This one is better if available.
+
+find /backups/db_backups -type f -mtime +60 -ls -delete >> /tmp/older60days-deleted.`date  +"%Y%m%d"`
+
+Even better as it lists the files to a log file so you know what was deleted and its "ls -ail" stats. :)
+
+
+Find files on sunday (cron) that are younger than last sunday buy older than yesterday 
+ex, runs on 9sep2012 (sun) the days it returns are 03-07sep2012, (M-F)
+
+find /backups/db_backups -type f -mtime +1 -mtime -6 -ls >> /tmp/weekfilesBSC.`date  +"%Y%m%d"`
+
+To get a list of days from above:
+cat /tmp/BRENT|awk '{ print $8 " " $9}'|sort -n|uniq
+
+
+
+
+
+for file in `awk '{print $10}' /tmp/BRENT.*`; do find /backups/db_backups -name $file -delete; done

@@ -1,0 +1,51 @@
+MySQL Server
+
+lvcreate -L10G -nlv_mysql vg_root
+mkfs -t ext3 /dev/vg_root/lv_mysql
+mkdir /var/lib/mysql
+
+Add the following to the /etc/fstab file.
+/dev/vg_root/lv_mysql /var/lib/mysql ext3 defaults 1 3
+
+Issue the following command to mount the newly formated LV.
+mount /var/lib/mysql
+
+Use YUM to install the software.
+yum install mysql mysql-server
+
+Once YUM has finished installing the software, we will need to make some changes to the
+MySQL configuration files before starting the MySQL service.
+Edit '/etc/my.cnf' to resemble the following. The items in ***** need to be changed/added from the default settings.
+[mysqld]
+datadir=/var/lib/mysql
+socket=/var/lib/mysql/mysql.sock
+# Default to using old password format for compatibility with mysql 3.x
+# clients (those using the mysqlclient10 compatibility package).
+*****old_passwords=0
+*****ft_min_word_len=3
+*****max_connections=500
+*****max_user_connections=500
+*****key_buffer = 384M
+*****table_cache=2048
+*****sort_buffer_size=32M
+*****read_buffer_size=16M
+*****max_allowed_packet=16M
+*****max_connect_errors=1000
+
+[mysql.server]
+user=mysql
+basedir=/var/lib
+[mysqld_safe]
+log-error=/var/log/mysqld.log
+pid-file=/var/run/mysqld/mysqld.pid
+
+Now open ports 3306 to allow MySQL traffic to the server. Run the following commands.
+iptables -A RH-Firewall-1-INPUT -m state --state NEW -m tcp -p tcp --dport 3306 -j ACCEPT
+service iptables save
+service iptables restart
+
+MySQL can now be started.
+service mysqld start
+
+After starting the service, run the 'chkconfig' command to ensure it starts on reboot.
+chkconfig --levels 2345 mysqld on

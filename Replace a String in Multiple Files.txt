@@ -1,0 +1,8 @@
+Replace a String in Multiple Files in Linux Using Grep and Sed
+http://vasir.net/blog/ubuntu/replace_string_in_multiple_files/
+
+This is the quickest way I've found to search for and replace every occurrence of a string in multiple files in linux.
+grep -rl matchstring somedir/ | xargs sed -i 's/string1/string2/g'
+example:
+grep -rl 'windows' ./ | xargs sed -i 's/windows/linux/g'
+

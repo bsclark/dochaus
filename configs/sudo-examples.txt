@@ -1,0 +1,2 @@
+%apache ALL=(ALL) /usr/sbin/service httpd restart, /bin/more /var/log/httpd/*, /usr/bin/tail /
+var/log/httpd/*, /usr/sbin/service mysqld restart

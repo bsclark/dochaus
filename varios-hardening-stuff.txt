@@ -1,0 +1,61 @@
+    USE mysql;
+
+    --- get rid of the test database, which is accessible to anyone from anywhere
+    SELECT * FROM db WHERE Db LIKE 'test%';
+    DROP DATABASE test;
+    DELETE FROM db WHERE Db LIKE 'test%';
+
+    --- remove the anonymous users
+    SHOW GRANTS FOR ''@'localhost';
+    REVOKE ALL ON *.* FROM ''@'localhost';
+    DELETE FROM user WHERE User='' and Host='localhost';
+
+    --- !!!replace example.com with your server name!!!
+    REVOKE ALL ON *.* FROM ''@'example.com';
+    DELETE FROM user WHERE User='' and Host='example.com';
+
+    --- if you don't need to connect as root from a remote server (and you don't, see SSH tunneling)
+    --- !!!replace example.com with your server name!!!
+    REVOKE ALL ON *.* FROM 'root'@'example.com';
+    DELETE FROM user WHERE User='root' and Host='example.com';
+
+    FLUSH PRIVILEGES;
+
+======================================
+turn off all apache mods not in use. send note to sean to ask about the ones loaded.
+
+
+=======================================
+PHP HARDENING
+Here are some configuration options that were adjusted in /etc/php/apache2-php4/php.ini
+safe_mode = on
+Limits what php can do. Prevents system calls and heavily enforces file ownership
+
+disable_functions = phpinfo, curl_exec, curl_init, passthru, show_source, proc_close, proc_get_status, proc_nice, proc_open, proc_terminate, shell_exec, system
+Prevents php scripts to use these functions. These functions are 'high-end' system function and are not normally used in standard web applications.
+
+expose_php = Off
+Hides php info in headers
+
+display_errors = Off
+Will not display errors to the browser. A white screen will be presented if error occurs and is not handled via code.
+
+log_errors = On
+Make sure we log those php errors
+=======================================
+Change '/etc/httpd/conf.d/ssl.conf' to disable low encryption ciphers for PCI compliance.
+RHEL5.1 base install of mod_ssl automatically disables SSLv2.
+But to be fully compliant we need to reject LOW ciphers.
+Edit '/etc/httpd/conf.d/ssl.conf' to use mod_rewrite. Search for the section labeled 'SSL
+Cipher Suite' and change the lines as follows:
+# SSL Cipher Suite:
+# List the ciphers that the client is permitted to negotiate.
+# See the mod_ssl documentation for a complete list.
+#SSLCipherSuite ALL:!ADH:!EXPORT:!SSLv2:RC4+RSA:+HIGH:+MEDIUM:+LOW
+SSLCipherSuite ALL:!ADH:!EXPORT:!SSLv2:RC4+RSA:+HIGH:+MEDIUM:!LOW
+========================================
+In the same file, turn off the server signature. This makes it harder to determine the OS and
+Apache versions.
+#ServerSignature On
+ServerSignature Off
+

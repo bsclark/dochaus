@@ -1,0 +1,58 @@
+Install SSMTP:
+1- SSMTP is a very very simple emailer. It is used in replacement of the much heavier sendmail.
+We are going to use it because there is no local Smart Relay
+host on the network. Also by not using sendmail, we do not
+have to worry about email sent to the server as there is no
+SMTP daemon or port 25 running/listening.
+2- We will need a email account setup on the mail server. The account nagiosalerts was created on it for this purpose.
+3- Ensure sendmail is not running and not configured to run on boot.
+service sendmail stop
+chkconfig –levels 0123456 sendmail off
+4- Install the package.
+yum install ssmtp
+5- Edit the file '/etc/ssmtp/ssmtp.conf'. The following items in RED need to be changed and/or
+added.
+##
+/etc/ssmtp.conf -- a config file for sSMTP sendmail.
+##
+See the ssmtp.conf(5) man page for a more verbose explanation of the
+# available options.
+#
+# The person who gets all mail for userids < 500
+# Make this empty to disable rewriting.
+root=user@domainname.com
+# The place where the mail goes. The actual machine name is required
+# no MX records are consulted. Commonly mailhosts are named mail.domain.com
+# The example will fit if you are in domain.com and your mailhub is so named.
+mailhub=mailserver.fqdn
+# Example for SMTP port number 2525
+# mailhub=mail.your.domain:2525
+# Example for SMTP port number 25 (Standard/RFC)
+# mailhub=mail.your.domain
+# Example for SSL encrypted connection
+# mailhub=mail.your.domain:465
+# Where will the mail seem to come from?
+RewriteDomain=domainname
+# The full hostname
+#Hostname=
+# Set this to never rewrite the "From:" line (unless not given) and to
+# use that address in the "from line" of the envelope.
+FromLineOverride=YES
+# Use SSL/TLS to send secure messages to server.
+#UseTLS=YES
+# Use SSL/TLS certificate to authenticate against smtp host.
+#UseTLSCert=YES
+# Use this RSA certificate.
+#TLSCert=/etc/ssl/certs/ssmtp.pem
+# Get enhanced (*really* enhanced) debugging information in the logs
+# If you want to have debugging of the config file parsing, move this option
+# to the top of the config file and uncomment
+#Debug=YES
+# Your email account
+AuthUser=user@domainname.com
+# The password for the email account
+AuthPass=password
+
+You can test this by running the following command.
+cat /etc/hosts|/usr/sbin/sendmail.ssmtp user@domainname
+

@@ -1,0 +1,31 @@
+# http://www.digipro.com/Papers/xntpd.shtml
+# Run-time configuration for ntp.conf
+
+server 127.127.1.1 prefer
+fudge 127.127.1.1 stratum 5
+ 
+ 
+# fictitious
+server 129.11.22.33
+server 130.22.33.44
+server 131.33.44.55
+
+restrict default ignore
+ 
+# fictitious
+restrict 129.11.22.33   nomodify noquery
+restrict 130.22.33.44   nomodify noquery
+restrict 131.33.44.55   nomodify noquery
+
+restrict 192.168.1.0   mask 255.255.255.0   nomodify
+restrict 127.0.0.1     # req'd because of the default 'restrict' above.
+ 
+enable auth monitor
+ 
+driftfile /var/db/ntp.drift
+statsdir  /var/db/ntpstats/
+ 
+filegen peerstats file peerstats type day enable
+filegen loopstats file loopstats type day enable
+filegen clockstats file clockstats type day enable
+ 

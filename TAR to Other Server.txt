@@ -1,0 +1,2 @@
+TAR to Other Server
+tar cf - filenames|rsh -n machine "dd of=/dev/tape obs=20b"

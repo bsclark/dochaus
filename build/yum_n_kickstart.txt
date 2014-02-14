@@ -1,0 +1,131 @@
+YUM & Kickstart Server
+
+pvcreate /dev/<disk name>
+vgcreate vg_yum /dev/<disk name>
+lvcreate -L10G -nlv_yum vg_root
+mkfs -t ext3 /dev/vg_root/lv_yum
+mkdir /yum
+
+Add the following to the /etc/fstab file.
+/dev/vg_root/lv_yum /yum ext3 defaults 1 3
+
+Issue the following command to mount the newly formated LV.
+mount /yum
+
+We need to know create the YUM and Kickstart directory structure and copy files into it.
+In /yum create the following structure.
+/yum/
+|--> ConfigFiles/
+|
+|--> Kickstart/
+| |--> RHEL5/
+|
+|--> Nagios/
+|
+|--> Nessus/
+|
+|--> OtherMisc/
+|
+|--> RHEL5/
+| |--> base/
+| |--> cluster/
+| |--> clusterstorage/
+| |--> updates/
+| +--> virtual/
+|
++--> XenUpdates/
+
+Now that we have a structure, it needs to be populated with the necessary data.
+Copy the contents of the Red Hat Enterprise Linux 5 Installlation CDs (1 thru 5) to
+/yum/Kickstart/RHEL5. This is for the Kickstart environment.
+Once done, copy the RPMS from there to the YUM environment in /yum/RHEL5.
+cp /yum/Kickstart/Server/*.rpm /yum/RHEL5/base/
+cp /yum/Kickstart/Cluster/*.rpm /yum/RHEL5/cluster/
+cp /yum/Kickstart/ClusterStorage/*.rpm /yum/RHEL5/clusterstorage/
+cp /yum/Kickstart/VT/*.rpm /yum/RHEL5/virtual/
+You now have the structure and files copied from the CDs in their proper places.
+
+At this point you all the RPMs in their right places and are ready to make YUM repositories out of
+them. To do this, the createrepo tool must first be installed. Issue the following command to install
+it.
+rpm -Uvh /yum/RHEL5/base/createrepo*
+
+Once the RPM has finished installing, 'cd' into each directory and run the createrepo command.
+cd /yum/Nagios
+createrepo ./
+cd /yum/Nessus
+createrepo ./
+cd /yum/OtherMisc
+createrepo ./
+cd /yum/XenUpdates
+createrepo ./
+cd /yum/RHEL5/base
+createrepo ./
+cd /yum/RHEL5/updates
+createrepo ./
+cd /yum/RHEL5/virtual
+createrepo ./
+cd /yum/RHEL5/cluster
+createrepo ./
+cd /yum/RHEL5/cluserstorage
+createrepo ./
+
+Before Kickstart and YUM are useful, you need to install HTTPD to server the RPMS to other 
+servers. Since this is the YUM server, and its not up yet, the following software will need to be
+installed manually from the YUM base repository.
+? httpd
+? apr
+? apr-util
+? postgresql-libs
+cd /yum/RHEL5/base
+rpm -Uvh httpd apr apr-util postgresql-libs
+NOTE: Do not start HTTPD until told to do so later in the instructions.
+
+HTTPD needs to be configured next. Place the following information into a new file called
+'/etc/httpd/conf.d/yum.conf'.
+Alias /yum "/yum/"
+<Directory "/yum/">
+Options Indexes MultiViews
+AllowOverride None
+Order allow,deny
+Allow from all
+</Directory>
+Alias /Kickstart "/yum/Kickstart/RHEL5/"
+<Directory "/yum/Kickstart/RHEL5/">
+Options Indexes MultiViews
+AllowOverride None
+Order allow,deny
+Allow from all
+</Directory>
+Next we need to change ownership and privileges on the yum directory before we start HTTPD.
+chown -R apache:apache /yum
+chmod -R 755 /yum
+
+Now open ports 80 to allow http:// traffic to the server. Run the following commands.
+iptables -A RH-Firewall-1-INPUT -m state --state NEW -m tcp -p tcp --dport 80 -j ACCEPT
+service iptables save
+service iptables restart
+
+OK, Now you can restart HTTPD. I know you have been really wanting to, so go ahead and do
+so now. After starting the service, run the 'chkconfig' command to ensure it starts on reboot.
+service httpd start
+chkconfig --levels 2345 httpd on
+#===============================
+# YUM Repo file
+#===============================
+[RHEL5-Base]
+name=RHEL5 Base
+baseurl=http://<yum server name>/yum/RHEL5/base/
+enabled=1
+gpgcheck=0
+[RHEL5-Update]
+name=RHEL5 Updates
+baseurl=http://<yum server name>/yum/RHEL5/updates/
+enabled=1
+gpgcheck=0
+
+You will need to move the RedHat-5.bash created above and place it in the '/yum/ConfigFiles/' directory.
+
+One last time change permissions and ownership of the /yum FS.
+chown -R apache:apache /yum
+chmod -R 755 /yum

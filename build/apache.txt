@@ -1,0 +1,48 @@
+Edit '/etc/httpd/conf/httpd.conf' to use mod_rewrite. Search for the section labeled
+'<Directory "/var/www/html">' and change the two lines as follows:
+# Options Indexes FollowSymLinks
+Options -Indexes FollowSymLinks ExecCGI
+# AllowOverride None
+AllowOverride ALL
+
+In the same file, find the following line and make the changes in RED (minus sign).
+<Directory "/var/www/icons">
+Options -Indexes MultiViews
+
+In that same file, change the following two lines to reflect the correct data.
+#ServerAdmin root@localhost
+ServerAdmin webmaster@somecompany.com
+#ServerName www.example.com:80
+ServerName hostname.domainname
+
+Turn off the server signature. This makes it harder to determine the OS and Apache versions.
+#ServerSignature On
+ServerSignature Off
+
+
+Now open ports 80/443 to allow http:// and https:// traffic to the server. Run the following
+commands.
+iptables -A RH-Firewall-1-INPUT -m state --state NEW -m tcp -p tcp --dport 443 -j ACCEPT
+iptables -A RH-Firewall-1-INPUT -m state --state NEW -m tcp -p tcp --dport 80 -j ACCEPT
+service iptables save
+service iptables restart
+
+
+Change the ownership and permissions on the data directory.
+chown -R apache:apache /var/www
+chmod -R 775 /var/www
+
+Change '/etc/httpd/conf.d/ssl.conf' to disable low encryption ciphers for PCI compliance.
+NOTE: RHEL5 base install of mod_ssl automatically disables SSLv2. But to be fully compliant we
+need to reject LOW ciphers.
+Edit '/etc/httpd/conf.d/ssl.conf' to use mod_rewrite. Search for the section labeled 'SSL
+Cipher Suite' and change the lines as follows:
+# SSL Cipher Suite:
+# List the ciphers that the client is permitted to negotiate.
+# See the mod_ssl documentation for a complete list.
+#SSLCipherSuite ALL:!ADH:!EXPORT:!SSLv2:RC4+RSA:+HIGH:+MEDIUM:+LOW
+SSLCipherSuite ALL:!ADH:!EXPORT:!SSLv2:RC4+RSA:+HIGH:+MEDIUM:!LOW
+
+service httpd start
+chkconfig --levels 2345 httpd on
+

@@ -1,0 +1,96 @@
+http://www.cyberciti.biz/tips/vmware-add-a-new-hard-disk-without-rebooting-guest.html
+
+Replace host# with actual value such as host0. You can find scsi_host value using the following command:
+# ls /sys/class/scsi_host
+
+Output:
+host0
+Now type the following to send a rescan request:
+echo "- - -" > /sys/class/scsi_host/host0/scan
+fdisk -l
+tail -f /var/log/message
+
+
+fdisk <new disk>
+make new partition, assign space, label it LVM.
+
+pvcreate <new disk partition>
+vgextend <vgname> <new disk partition>
+
+lvextend -L+10G <lvname to extend>                     ## from fstab
+resize2fs <lvname to extend>
+======================
+http://kbase.redhat.com/faq/docs/DOC-3942
+
+rescan-scsi-bus.sh
+This wil rescan all the scsi disks attched with out rebooting the VM.
+
+You can find mode detailsof this in the below link.
+
+http://www.fifi.org/cgi-bin/man2html/usr/share/man/man8/rescan-scsi-bus.sh.8.gz
+
+echo "- - -" > /sys/class/scsi_host/host0/scan
+=========================
+http://www.thewebhostingdir.com/web-hosting-guides/add-a-new-hard-disk-vmware-without-rebooting-guest.html
+
+Add a New Hard Disk VMWARE Without Rebooting Guest
+
+It is possible to add or remove a SCSI device explicitly, or to re-scan an entire SCSI bus without 
+rebooting a running Linux VM guest.
+
+1) Add a New Disk To Vm Guest
+
+    * First, you need to add hard disk by visiting vmware hardware settings menu.
+      Click on VM > Settings
+    * Alternatively you can press CTRL + D to bring settings dialog box.
+    * Click on Add+ to add new hardware to guest:
+    * Select hardware type Hard disk and click on Next
+    * Select create a new virtual disk and click on Next
+    * Set virtual disk type to SCSI and click on Next
+    * Set maximum disk size as per your requirements and click on Next
+    * Finally, set file location and click on Finish.
+
+2) Rescan the SCSI Bus to Add a SCSI Device Without rebooting the VM
+
+A rescan can be issued by typing the following command:
+
+echo "- - -" > /sys/class/scsi_host/host#/scan
+fdisk -l
+tail -f /var/log/message
+
+Replace host# with actual value such as host0. You can find scsi_host value using the following command:
+
+# ls /sys/class/scsi_host
+
+Output:
+
+host0
+
+Now type the following to send a rescan request:
+
+echo "- - -" > /sys/class/scsi_host/host0/scan
+fdisk -l
+tail -f /var/log/messages
+
+
+~~I didnt find this necessary on SLES10
+3) Format a New Disk
+
+You can create partition using fdisk and format it using mkfs.ext3 command:
+
+# fdisk /dev/sdc
+# mkfs.ext3 /dev/sdc3
+
+4) Create a Mount Point And Update /etc/fstab
+
+# mkdir /disk3
+
+Open /etc/fstab file, enter:
+
+# vi /etc/fstab
+
+Append as follows:
+
+/dev/sdc3               /disk3           ext3    defaults        1 2
+
+Save and close the file.

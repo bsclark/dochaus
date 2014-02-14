@@ -1,0 +1,16 @@
+Next we need to modify the PHP.ini file to show the errors on the page since this is a staging
+server.
+Edit '/etc/php.ini' and change the following line:
+;display_errors = Off
+display_errors = On
+NOTE: the option “error_reporting = E_ALL” also needs to be set, but this is the default in RHEL5
+so no action is needed.
+
+
+; After this number of seconds, stored data will be seen as 'garbage' and
+; cleaned up by the garbage collection process.
+;session.gc_maxlifetime = 1440
+session.gc_maxlifetime = 14400
+; Document expires after n minutes.
+;session.cache_expire = 180
+session.cache_expire = 400

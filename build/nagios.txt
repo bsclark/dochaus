@@ -1,0 +1,245 @@
+yum -y install nagios nagios-plugins-nrpe sendmail-cf
+
+In order to login to the Nagios web interface, we need to first set the password for it.
+htpasswd -c /etc/nagios/htpasswd.users nagios-admin
+
+Start the Nagios service and ensure it restarts on reboot.
+service nagios start
+chkconfig --levels 2345 nagios on
+
+Nagios Configuration:
+This section describes the configuration changes that need to be done to get Nagios monitoring
+correctly.
+1- Modify '/etc/nagios/nagios.cfg' under the EXTERNAL COMMAND OPTION section.
+#check_external_commands=0
+check_external_commands=1
+
+2- Modify '/etc/nagios/commands.cfg' and add the following after the “check_udp” section.
+# 'check_nrpe' command definition
+define command{
+command_name check_nrpe
+command_line /usr/lib/nagios/plugins/check_nrpe -H $HOSTADDRESS$ -c $ARG1$
+}
+# 'check_ssh' command definition
+define command{
+command_name check_ssh
+command_line /usr/lib/nagios/plugins/check_ssh -H $HOSTADDRESS$
+}
+# 'check_https' command definition
+define command{
+command_name check_https
+command_line $USER1$/check_http --ssl -H $HOSTADDRESS$
+}
+3- Modify '/etc/nagios/nagios.cfg' and under the commented out CFG file section add the following
+lines.
+#Linux
+cfg_file=/etc/nagios/remote-service-rhel5.cfg
+cfg_file=/etc/nagios/remote-host-rhel5.cfg
+#Windows
+#cfg_file=/etc/nagios/remote-service-windows.cfg
+#cfg_file=/etc/nagios/remote-host-windows.cfg
+#HTTPD
+cfg_file=/etc/nagios/httpd-monitors.cfg
+
+Modify '/etc/nagios/cgi.cfg' and change the following. This will allow full use of the Nagios Web
+GUI.
+authorized_for_system_information=nagios-admin
+authorized_for_configuration_information=nagios-admin
+
+After creating the configuration files listed above, they need to have their permissions and
+ownership changed.
+chown nagios:nagios /etc/nagios/*.cfg
+chmod 755 /etc/nagios/*.cfg
+
+Restart Nagios to have changes take affect.
+service nagios restart
+
+Nagios build/configuration done. You can access the web interface by going to the URL
+http://<servername>/nagios. The user ID is 'nagios-admin' and the password if not changed, is the
+same as used above.
+
+----------------------
+Base Configuration Files (Examples):
+Here are some example base configuration files. These were actually used to create the initial
+monitoring on the server. If this is a rebuild of this server, this information will probably be out of
+date. Restore from backup these files in addition to any others that may have been added. It is
+suggested that any additional monitoring and/or configuration file changes that are made get
+incorporated into a document for easier recoverability if needed.
+/etc/nagios/remote-host-rhel5.cfg
+define hostgroup{
+hostgroup_name rhel5
+alias Red Hat Enterprise Linux 5 Servers
+members hostname,hostname,hostname
+}
+define host{
+use linux-server
+host_name hostname
+alias Build Server
+address hostname.domainname
+}
+
+/etc/nagios/remote-host-windows.cfg
+define hostgroup{
+hostgroup_name win2k
+alias Windows 2003 Servers
+members hostname
+}
+define host{
+name windows-server
+use generic-host
+check_period 24x7
+max_check_attempts 10
+check_command check-host-alive
+notification_period workhours
+notification_interval 120
+notification_options d,u,r
+contact_groups admins
+register 0
+}
+define host{
+use windows-server
+host_name hostname
+alias Windows Server
+address hostname.domianname
+}
+
+/etc/nagios/remote-service-rhel5.cfg
+define service{
+use local-service
+host_name hostname,hostname,hostname
+service_description Current Users
+check_command check_nrpe!check_users
+}
+define service{
+use local-service
+host_name hostname,hostname,hostname
+service_description Total Processes
+check_command check_nrpe!check_total_procs
+}
+define service{
+use local-service
+host_name hostname,hostname,hostname
+service_description Current Load
+check_command check_nrpe!check_load
+}
+define service{
+use local-service
+host_name hostname,hostname,hostname
+service_description Root Partition
+check_command check_nrpe!check_disk
+}
+define service{
+use local-service
+host_name hostname
+service_description YUM Partition
+check_command check_nrpe!check_disk_yum
+}
+define service{
+use local-service
+host_name hostname,hostname,hostname
+service_description PING
+check_command check_ping!100.0,20%!500.0,60%
+}
+define service{
+use local-service
+host_name hostname,hostname,hostname
+service_description Zombie Processes
+check_command check_nrpe!check_zombie_procs
+}
+
+/etc/nagios/remote-service-windows.cfg
+define service{
+use local-service
+host_name hostname
+service_description Windows CPU
+check_command check_nrpe!check_cpu
+}
+define service{
+use local-service
+host_name hostname
+service_description Windows uptime
+check_command check_nrpe!check_uptime
+}
+define service{
+use local-service
+host_name hostname
+service_description Windows Disk Free
+check_command check_nrpe!check_disk_free
+}
+
+/etc/nagios/httpd-monitors.cfg
+# Linux host definition template - This is NOT a real host, just a template!
+
+define host{
+name linux-server-rm
+use generic-host
+check_period 24x7
+max_check_attempts 10
+check_command check_http
+notification_period workhours
+notification_interval 120
+notification_options d,u,r
+contact_groups admins
+register 0
+}
+define servicegroup{
+servicegroup_name somegrpname
+alias Admin Production
+}
+define service{
+use local-service
+host_name hostname.hostname
+service_description Check Status of HTTPD
+check_command check_http
+servicegroups somegrpname
+}
+
+--------
+The '/etc/nagios/commands.cfg' file needs to be updated to send emails via ssmtp. Edit the file
+and change the following to what is in RED.
+# 'host-notify-by-email' command definition
+define command{
+command_namehost-notify-by-email
+command_line /usr/bin/printf "%b" "Subject: Host $HOSTSTATE$ alert for
+$HOSTNAME$!\n\n\n***** Nagios 2.9 *****\n\nNotification Type:
+$NOTIFICATIONTYPE$\nHost: $HOSTNAME$\nState: $HOSTSTATE$\nAddress:
+$HOSTADDRESS$\nInfo: $HOSTOUTPUT$\n\nDate/Time: $LONGDATETIME$\n" |
+/usr/sbin/sendmail.ssmtp $CONTACTEMAIL$
+}
+# 'host-notify-by-epager' command definition
+define command{
+command_namehost-notify-by-epager
+command_line/usr/bin/printf "%b" "Subject: $NOTIFICATIONTYPE$ alert - Host
+$HOSTNAME$ is $HOSTSTATE$\n\n\nHost '$HOSTALIAS$' is $HOSTSTATE$\nInfo:
+$HOSTOUTPUT$\nTime: $LONGDATETIME$" | /usr/sbin/sendmail.ssmtp $CONTACTPAGER$
+}
+# 'notify-by-email' command definition
+define command{
+command_namenotify-by-email
+command_line/usr/bin/printf "%b" "Subject: ** $NOTIFICATIONTYPE$ alert -
+$HOSTALIAS$/$SERVICEDESC$ is $SERVICESTATE$ **\n\n\n***** Nagios 2.9
+*****\n\nNotification Type: $NOTIFICATIONTYPE$\n\nService: $SERVICEDESC$\nHost:
+$HOSTALIAS$\nAddress: $HOSTADDRESS$\nState: $SERVICESTATE$\n\nDate/Time:
+$LONGDATETIME$\n\nAdditional Info:\n\n$SERVICEOUTPUT$" | /usr/sbin/sendmail.ssmtp
+$CONTACTEMAIL$
+}
+# 'notify-by-epager' command definition
+define command{
+command_namenotify-by-epager
+command_line/usr/bin/printf "%b" "Subject: $NOTIFICATIONTYPE$:
+$HOSTALIAS$/$SERVICEDESC$ is $SERVICESTATE$\n\n\nService: $SERVICEDESC$\nHost:
+$HOSTNAME$\nAddress: $HOSTADDRESS$\nState: $SERVICESTATE$\nInfo:
+$SERVICEOUTPUT$\nDate: $LONGDATETIME$" | /usr/sbin/sendmail.ssmtp $CONTACTPAGER$
+}
+
+
+=====================
+http://www.nagiosexchange.org/
+http://www.nagios.org/
+http://www.nagioscommunity.org/wiki/index.php/Main_Page
+http://www.linickx.com/blog/archives/271/how-to-monitor-wordpress-with-nagios/
+http://giray.devlet.cc/linux/ncap/ncap-0.4.x-documentation.txt
+http://kb.nitix.com/2958
+http://nagios.sourceforge.net/docs/nrpe/NRPE.pdf
+http://homepage.mac.com/duling/halfdozen/Nagios-Howto-p2.html
+http://www.openfree.org/pet/index.php/Nagios_Network_Monitor_-_Installation_and_configuration

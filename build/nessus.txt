@@ -1,0 +1,35 @@
+Install Nessus:http://www.nessus.org/nessus/
+
+Install Nessus. This process will also install many of its plugins.
+yum install Nessus nmap
+
+
+Create the master Nessus user. Use the values and keys shown below.
+Login = nessus-admin
+Password = <some password>
+Authentication = <enter>
+Rules = <ctrl-D>
+Answer [OK] when asked.
+
+Start the Nessus daemon and ensure it will start on a reboot.
+service nessusd start
+chkconfig --levels 2345 nessusd on
+
+Installation of Nessus Activation Code
+This step requires you to be a registered user on the Nessus site. At the time of this writing, the
+lagged no-fee option is being used. If not done already, go to http://www.nessus.org/register and fill
+out the form. An Activation Code will be emailed to you. Once you have the code, do the following.
+/opt/nessus/bin/nessus-fetch --register <reg code>
+
+This process will take some time
+as it will verify the code and then download any new plugins.
+
+
+A hole needs to be created for the Nessus Client to be able to connect to the server to run scans.
+iptables -A RH-Firewall-1-INPUT -m state --state NEW -m tcp -p tcp --dport 1241 -j ACCEPT
+service iptables save
+service iptables restart
+
+To preform a scan, create a file called 'nessus-targets' in roots home directory with server names in
+it, one per line and run the following command.
+/opt/nessus/bin/nessus -q -T text -x localhost 1241 nessus-admin mynessus ./nessustargets-nessus-scan-results

@@ -1,0 +1,33 @@
+Syslog Configuration
+
+Syslog is used to store the firewall and switch logs. In order for this to work, the following needs
+to be added to '/etc/syslog.conf'. Items in RED need to be added. The two lines in red should go at
+the end of the file.
+# Log anything (except mail) of level info or higher.
+# Don't log private authentication messages!
+*.info;mail.none;authpriv.none;cron.none;!local5.*;!local6.*
+/var/log/messages
+# Switches and Friewall logs
+local5.* /var/log/switches/edge.log
+local6.* /var/log/switches/jibbitz_core_juniper_fw.log
+
+
+The '/etc/sysconfig/syslog' needs to have the '-r' option added like below in RED.
+# Options to syslogd
+# -m 0 disables 'MARK' messages.
+# -r enables logging from remote machines
+# -x disables DNS lookups on messages recieved with -r
+# See syslogd(8) for more details
+SYSLOGD_OPTIONS="-m 0 -r"
+
+
+The Firewall rules need to be modified to allow in syslog traffic.
+iptables -A RH-Firewall-1-INPUT -p udp -m state --state NEW -m udp --dport 514 -j ACCEPT
+service iptables save
+service iptables restart
+
+
+The log Files need to be created and Syslog restarted.
+touch /var/log/switches/edge.log
+touch /var/log/switches/jibbitz_core_juniper_fw.log
+service syslogd restart
