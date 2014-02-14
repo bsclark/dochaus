@@ -1,0 +1,24 @@
+#From boot/install cds
+
+images:
+drwxr-xr-x 3 user user centos
+
+images/centos:
+drwxr-xr-x 5 user user x86_64
+
+images/centos/x86_64:
+drwxr-xr-x 2 user user 6.3
+drwxr-xr-x 2 user user 6.4
+drwxr-xr-x 2 user user 5.9
+
+images/centos/x86_64/6.3:
+-rw-r--r-- 1 user user initrd.img
+-rwxr--r-- 1 user user vmlinuz
+
+images/centos/x86_64/6.4:
+-rw-r--r-- 1 user user initrd.img
+-rwxr--r-- 1 user user vmlinuz
+
+images/centos/x86_64/5.9:
+-rw-r--r-- 1 user user  initrd.img
+-rw-r--r-- 1 user user  vmlinuz

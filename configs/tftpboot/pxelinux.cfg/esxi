@@ -1,0 +1,12 @@
+MENU TITLE ESXi Menu
+
+LABEL esxi51u1
+ MENU LABEL ESXi-5.1 u1
+ KERNEL images/esxi51u1/mboot.c32
+ APPEND -c images/esxi51u1/boot.cfg
+
+LABEL esxi55
+ MENU LABEL ESXi-5.5
+ KERNEL images/esxi55/mboot.c32
+ APPEND -c images/esxi55/boot.cfg
+

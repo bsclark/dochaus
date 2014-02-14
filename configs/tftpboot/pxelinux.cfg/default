@@ -1,0 +1,52 @@
+default vesamenu.c32
+prompt 0
+timeout 300
+ONTIMEOUT local
+NOESCAPE 1
+MENU INCLUDE pxelinux.cfg/default.inc
+
+MENU TITLE PXE Main Menu
+
+LABEL local
+  MENU LABEL ^Boot Local Hard Drive
+  MENU DEFAULT
+  LOCALBOOT 0
+  MENU SEPARATOR
+
+MENU BEGIN centos
+MENU TITLE CentOS
+  LABEL Previous
+  MENU LABEL ^Previous Menu
+  MENU EXIT
+  MENU SEPARATOR
+  MENU LABEL ^CentOS
+  MENU INCLUDE pxelinux.cfg/centos
+MENU END
+
+MENU BEGIN esxi
+MENU TITLE ESXi 5.x
+  LABEL Previous
+  MENU LABEL ^Previous Menu
+  MENU EXIT
+  MENU SEPARATOR
+  MENU LABEL ^ESXi 5.x
+  MENU INCLUDE pxelinux.cfg/esxi
+MENU END
+
+MENU SEPARATOR
+
+LABEL reboot
+  MENU LABEL ^Reboot
+  TEXT HELP
+  Reboots this system w/o doing anything
+  ENDTEXT
+  COM32 reboot.c32
+
+LABEL poweroff
+  MENU LABEL Power Off
+  TEXT HELP
+  Power Off this system
+  ENDTEXT
+  COMBOOT poweroff.com
+
+

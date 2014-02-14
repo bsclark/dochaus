@@ -1,0 +1,55 @@
+MENU TITLE CentOS Menu
+
+LABEL centos_6.4_x86_64
+  MENU LABEL CentOS 6.4 x86_64 - Kickstart - Minimal
+  KERNEL images/centos/x86_64/6.4/vmlinuz
+  APPEND initrd=images/centos/x86_64/6.4/initrd.img ramdisk_size=100000 ksdevice=eth0 ks=http://kickstartaddress/c6.4-min.ks
+  TEXT HELP
+  Install CentOS 6.4 64bit from standard kickstart for minimal
+  config plus some utilities
+  ENDTEXT
+
+LABEL centos_6.3_x86_64
+  MENU LABEL CentOS 6.3 x86_64 - Kickstart - Minimal
+  KERNEL images/centos/x86_64/6.3/vmlinuz
+  APPEND initrd=images/centos/x86_64/6.3/initrd.img ramdisk_size=100000 ksdevice=eth0 ks=http://kickstartaddress/c6-min.ks
+  TEXT HELP
+  Install CentOS 6.3 64bit from standard kickstart for minimal
+  config plus some utilities
+  ENDTEXT
+
+LABEL centos_5.9_x86_64
+  MENU LABEL CentOS 5.9 x86_64 - Kickstart - Minimal
+  KERNEL images/centos/x86_64/5.9/vmlinuz
+  APPEND initrd=images/centos/x86_64/5.9/initrd.img ramdisk_size=100000 ksdevice=eth0 ks=http://kickstartaddress/c5-min.ks
+  TEXT HELP
+  Install CentOS 5.9 64bit from standard kickstart for minimal
+  config plus some utilities
+  ENDTEXT
+
+LABEL centos_5.9_x86_64
+  MENU LABEL CentOS 5.9 x86_64 - Kickstart - Hadoop Node
+  KERNEL images/centos/x86_64/5.9/vmlinuz
+  APPEND initrd=images/centos/x86_64/5.9/initrd.img ramdisk_size=100000 ksdevice=eth0 ks=http://kickstartaddress/c5-hadoop.ks
+  TEXT HELP
+  Install CentOS 5.9 64bit from standard kickstart for Cloudera Hadoop Nodes
+  config plus some utilities
+  ENDTEXT
+
+
+MENU SEPARATOR
+
+LABEL -
+  MENU LABEL CloudStack Host Install
+  MENU DISABLE
+
+LABEL centos_6.4_x86_64_cs
+  MENU LABEL CentOS 6.4 x86_64 - Kickstart - CloudStack Host
+  MENU INDENT 1
+  KERNEL images/centos/x86_64/6.4/vmlinuz
+  APPEND initrd=images/centos/x86_64/6.4/initrd.img ramdisk_size=100000 ksdevice=eth0 ks=http://kickstartaddress/c6.4-cs.ks
+  TEXT HELP
+  Install CentOS 6.4 64bit from standard kickstart 
+  to install a CloudStack KVM Host
+  ENDTEXT
+
