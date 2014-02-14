@@ -1,0 +1,14 @@
+To create a test file of X size.
+
+dd if=/dev/zero of=filename bs=1 count=1GB
+
+or
+
+
+This creates a 1GB file
+dd if=/dev/zero of=filename bs=1kB count=1MB
+
+This creates a 60MB file
+sudo dd if=/dev/zero of=firewalls.log bs=1KB count=60KB
+
+
