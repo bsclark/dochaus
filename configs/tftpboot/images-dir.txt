@@ -22,3 +22,9 @@ images/centos/x86_64/6.4:
 images/centos/x86_64/5.9:
 -rw-r--r-- 1 user user  initrd.img
 -rw-r--r-- 1 user user  vmlinuz
+
+
+For ESXi image files, mount the install CD and copy the contents of it into the dir.
+EX.
+mount -o loop esxi.iso /mnt
+cp -r /mnt/* /tftpboot/images/esxi51u1/
