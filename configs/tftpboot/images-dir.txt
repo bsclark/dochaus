@@ -28,3 +28,6 @@ For ESXi image files, mount the install CD and copy the contents of it into the 
 EX.
 mount -o loop esxi.iso /mnt
 cp -r /mnt/* /tftpboot/images/esxi51u1/
+
+Then edit file boot.cfg and add the following between the title and kernel lines
+prefix=images/esxi51u1/
