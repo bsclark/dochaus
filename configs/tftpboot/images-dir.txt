@@ -31,3 +31,6 @@ cp -r /mnt/* /tftpboot/images/esxi51u1/
 
 Then edit file boot.cfg and add the following between the title and kernel lines
 prefix=images/esxi51u1/
+and modify the kernel line to remove the /
+kernel=tboot.b00
+then remove the / for every entry on the modules line
