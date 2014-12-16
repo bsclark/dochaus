@@ -1,0 +1,97 @@
+# basic env
+.bashrc and ./vimrc from github
+
+# Install Chrome
+get google-chrome & google-talkplugin repo files and install
+
+# set chrome as default mail client
+yum install -y gnome-gmail
+
+settings -> default apps -> mail set to gmail
+
+# Nautilus Tweaks
+** Fedora 21 - repo = surkum-nautilus-actions.repo
+[surkum-nautilus-actions]
+name=Copr repo for nautilus-actions owned by surkum
+baseurl=http://copr-be.cloud.fedoraproject.org/results/surkum/nautilus-actions/fedora-$releasever-$basearch/
+skip_if_unavailable=True
+gpgcheck=0
+enabled=0
+
+yum install -y nautilus-actions.x86_64 
+
+then disable repo.
+
+run nautilus actions config tool, create 3 entries
+For all
+    Action -> display item in location context menu
+1- Terminal
+    Command -> /usr/bin/gnome-terminal --working-directory=/home/<userdir>
+2- Chrome
+    Command -> /usr/bin/google-chrome
+3- Gedit
+    Command -> /usr/bin/gedit
+
+Then "Record All Actions" button
+Restart gnome Alt-F2, r, <enter
+
+# other nautilus tweaks
+When nautilus is open to a dir, upper left of screen has a drop down for it. -> Preferences
+Set
+Views
+  List View
+  Sort folders befor files
+Behavior
+  Single click to open items
+  ask before emptying trash
+  include a delete command to bypass trash
+Display
+  navigate folders in a tree
+
+# Gnome Terminal
+Mod default profile
+terminal size = 99x31
+uncheck limit scrollback
+
+# Gnome Tweaks
+yum install -y dconf-editor.x86_64 gnome-tweak-tool
+
+run dconf-editor, find org -> gnome -> nautilus -> preferences -> 
+check always-use-location-entry
+
+org -> gnome -> gnome-screenshot -> auto-save-directory = file://home/<username>/Pictures/Screenshots
+
+run gnome-tweak-tool
+Desktop
+  Icons on Desktop = On
+Startup Apps
+  Add -> Hipchat
+Top Bar
+  check show date
+Windows
+  Titlebar Buttons
+    Maximize = On
+    Minimize = Off
+
+# HipChat
+Get repo and install
+
+# Get Virtualbox repo
+yum install -y VirtualBox
+
+
+# Various other apps
+yum install -y geany keepassx iotop iftop nmap
+
+# create some app launchers, ex.   ## put in /usr/share/applications if need for everyone on system
+cat ~/.local/share/applications/rdp-<servername>.desktop 
+[Desktop Entry]
+Type=Application
+Name=RDP - <servername>
+Comment=
+Exec=rdesktop <servername> -g 1024x768 -d <domainname> -T "<servername to show in title bar>" -z
+Icon=trophy-bronze
+Categories=GTK;GNOME;Utility;
+Terminal=false
+
+
