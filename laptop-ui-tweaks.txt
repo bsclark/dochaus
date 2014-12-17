@@ -95,3 +95,17 @@ Categories=GTK;GNOME;Utility;
 Terminal=false
 
 
+# sublime text 3 and add to favorites
+wget http://c758482.r82.cf2.rackcdn.com/sublime_text_3_build_3065_x64.tar.bz2 -P /opt/
+tar xvfj /opt/sublime_text_3_build_3065_x64.tar.bz2 
+
+vi ~/.local/share/applications/sublime-text-3.desktop
+[Desktop Entry]
+Type=Application
+Name=Sublime Text 3
+Comment=
+Exec=/opt/sublime_text_3/sublime_text
+Icon=accessories-text-editor
+Categories=GTK;GNOME;Utility;
+Terminal=false
+
