@@ -1,0 +1,9 @@
+service mariadb stop
+
+yum remove -y mariadb mariadb-libs mariadb-server mariadb-bench mariadb-devel mariadb-devel mariadb-embedded mariadb-embedded mariadb-embedded-devel mariadb-embedded-devel mariadb-libs mariadb-test
+
+rm -rf /var/lib/mysql/ /etc/mysql ~/.my*
+
+
+
+
