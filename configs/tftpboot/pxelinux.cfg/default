@@ -38,6 +38,7 @@ MENU SEPARATOR
 LABEL dban
   MENU LABEL DBAN - Darik's Boot and Nuke
   KERNEL images/dban/dban.bzi
+  APPEND nuke="dwipe --autonuke" silent
   TEXT HELP
   Darik's Boot and Nuke for clearing data off drives.
 
