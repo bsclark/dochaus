@@ -35,6 +35,16 @@ MENU END
 
 MENU SEPARATOR
 
+LABEL dban
+  MENU LABEL DBAN - Darik's Boot and Nuke
+  KERNEL images/dban/dban.bzi
+  TEXT HELP
+  Darik's Boot and Nuke for clearing data off drives.
+
+  ENDTEXT
+
+MENU SEPARATOR
+
 LABEL reboot
   MENU LABEL ^Reboot
   TEXT HELP

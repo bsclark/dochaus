@@ -23,6 +23,17 @@ images/centos/x86_64/5.9:
 -rw-r--r-- 1 user user  initrd.img
 -rw-r--r-- 1 user user  vmlinuz
 
+images/dban/dban.bzi
+-r-xr-xr-x 1 root root      853 Jun 20 17:55 about.txt
+-r-xr-xr-x 1 root root 16318688 Jun 20 17:55 dban.bzi
+-r-xr-xr-x 1 root root    24576 Jun 20 17:55 isolinux.bin
+-r-xr-xr-x 1 root root     2048 Jun 20 17:55 isolinux.cat
+-r-xr-xr-x 1 root root     4160 Jun 20 17:55 isolinux.cfg
+-r-xr-xr-x 1 root root     1026 Jun 20 17:55 quick.txt
+-r-xr-xr-x 1 root root      390 Jun 20 17:55 raid.txt
+-r-xr-xr-x 1 root root      762 Jun 20 17:55 warning.txt
+
+Download from dban.org, mount iso and copy all the files out. 
 
 For ESXi image files, mount the install CD and copy the contents of it into the dir.
 EX.
