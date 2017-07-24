@@ -1,0 +1,46 @@
+# PXE Setup
+A really quick and dirty how-to to create a PXE boot server. This example also creates a nice menu system and adds an option
+into to boot into DBAN (Darik's Boot and Nuke, https://dban.org) for PXE booting to wipe disks.
+
+Assumes you have an already working DHCP server that is already handing out the PXE boot server IP.
+
+
+As done on CentOS 6.4
+```
+yum install tftp-server syslinux
+
+vi /etc/xinetd.d/tftp
+# disable to 'no'
+# change path of tftpboot dir to /tftpboot
+
+service xinetd restart
+
+mkdir /tftpboot
+```
+
+Copy needed files from syslinux to the tftpboot directory
+```
+cp /usr/lib/syslinux/pxelinux.0 /tftpboot
+cp /usr/lib/syslinux/menu.c32 /tftpboot
+cp /usr/lib/syslinux/memdisk /tftpboot
+cp /usr/lib/syslinux/mboot.c32 /tftpboot
+cp /usr/lib/syslinux/chain.c32 /tftpboot
+```
+
+Create the directory for your PXE menus
+```
+mkdir /tftpboot/pxelinux.cfg
+```
+
+Create a base directory for images. Create directories for each CentOS release you are supporting.
+```
+mkdir -p /tftpboot/images/centos/x86_64/6
+mkdir -p /tftpboot/images/dban
+```
+
+For each "Release" and "ARCH" Copy vmlinuz and initrd.img from /images/pxeboot/ directory on "disc 1" of that $Release/$ARCH to /tftpboot/images/centos/$ARCH/$RELEASE
+
+
+Resources:
+https://wiki.centos.org/HowTos/PXE/PXE_Setup
+https://wiki.centos.org/HowTos/NetworkInstallServer

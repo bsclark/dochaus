@@ -1,0 +1,14 @@
+Found out a fun way to get a CD served from a Web site to boot a system with an ILO.
+
+```
+yum install httpd
+
+vi /etc/httpd/conf/httpd.conf
+
+# add 
+application/octet-stream .iso .ISO .img .IMG
+
+service httpd restart
+```
+
+Place ISO in /var/www/html/someisofilename.iso
