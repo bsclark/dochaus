@@ -18,7 +18,8 @@ pvcreate <new disk partition>
 vgextend <vgname> <new disk partition>
 
 lvextend -L+10G <lvname to extend>                     ## from fstab
-resize2fs <lvname to extend>
+resize2fs <lvname to extend>                           ## for ext3/ext4
+xfs_growfs <lvname to extend>                          ## for xfs
 ======================
 http://kbase.redhat.com/faq/docs/DOC-3942
 
