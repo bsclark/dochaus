@@ -18,6 +18,11 @@ pvcreate <new disk partition>
 vgextend <vgname> <new disk partition>
 
 lvextend -L+10G <lvname to extend>                     ## from fstab
+
+# Couldn't create temporary archive name
+lvextend -An -L+5G --resizefs /dev/mapper/vg08_root
+lvextend -An -L+5G --xfs_growfs /dev/mapper/vg08_root
+
 resize2fs <lvname to extend>                           ## for ext3/ext4
 xfs_growfs <lvname to extend>                          ## for xfs
 ======================
