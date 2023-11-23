@@ -1,0 +1,25 @@
+Mirror
+  https://steamdeck-packages.steamos.cloud/archlinux-mirror/
+
+Sublime Text install (from: https://gist.github.com/sanyer/ce815296bc4fac38752673d20e7fb3f2)
+  curl -O https://download.sublimetext.com/sublimehq-pub.gpg
+  sudo pacman-key --add sublimehq-pub.gpg
+  sudo pacman-key --lsign-key 8A8F901A
+  rm sublimehq-pub.gpg 
+  echo -e "\n[sublime-text]\nServer = https://download.sublimetext.com/arch/stable/x86_64" | sudo tee -a /etc/pacman.conf
+  sudo pacman -Syu sublime-text
+
+I got these errors when I tried the above
+  sublime-text: /opt/sublime_text/plugin_host-3.3 exists in filesystem
+  sublime-text: /opt/sublime_text/plugin_host-3.8 exists in filesystem
+  sublime-text: /opt/sublime_text/sublime_text exists in filesystem
+  Errors occurred, no packages were upgraded.
+So I had to do this. The files were most likely from another non-pacman install I tried and forgot about. 
+  sudo pacman -S sublime-text --overwrite "/opt/sublime_text/*"
+Then I ran into this error
+  touch: setting times of '/usr': Read-only file system
+To resolve
+  touch: setting times of '/usr': Read-only file system
+Install then reneable
+  sudo steamos-readonly enable
+  
