@@ -26,7 +26,14 @@ So I had to do this. The files were most likely from another non-pacman install 
 Then I ran into this error
   touch: setting times of '/usr': Read-only file system
 To resolve
-  touch: setting times of '/usr': Read-only file system
+  sudo steamos-readonly disable
 Install then reneable
   sudo steamos-readonly enable
   
+
+Good links and Resources
+  https://github.com/CryoByte33/steam-deck-utilities
+  https://steamdeck.ca/how-tos/how-to-always-start-steam-deck-in-desktop-mode/6
+  https://www.reddit.com/r/SteamDeckTricks/comments/wfx3wk/fix_for_bluetooth_devices_not_reconnecting/
+  https://www.svg.com/1115238/how-to-fix-your-steam-deck-download-speeds/#
+  https://gist.github.com/sanyer/ce815296bc4fac38752673d20e7fb3f2
