@@ -30,6 +30,21 @@ To resolve
 Install then reneable
   sudo steamos-readonly enable
   
+Install Flatpak
+  sudo pacman -S flatpak
+
+Got the following errors
+  warning: Public keyring not found; have you run 'pacman-key --init'?
+  downloading required keys...
+  error: keyring is not writable
+  error: required key missing from keyring
+  error: failed to commit transaction (could not find or read file)
+  Errors occurred, no packages were upgraded.
+
+The fix
+  sudo pacman-key --init
+  sudo pacman-key --populate archlinux
+  sudo pacman -Sy archlinux-keyring
 
 Good links and Resources
   https://github.com/CryoByte33/steam-deck-utilities
