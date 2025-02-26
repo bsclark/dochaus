@@ -29,7 +29,7 @@ To resolve
   sudo steamos-readonly disable
 Install then reneable
   sudo steamos-readonly enable
-  
+
 Install Flatpak
   sudo pacman -S flatpak
 
@@ -44,7 +44,15 @@ Got the following errors
 The fix
   sudo pacman-key --init
   sudo pacman-key --populate archlinux
+  sudo pacman-key --populate holo
   sudo pacman -Sy archlinux-keyring
+
+Install PyCharm Community Edition
+  flatpak install flathub com.jetbrains.PyCharm-Community
+  
+Run PyCharm
+  flatpak run com.jetbrains.PyCharm-Community
+
 
 Good links and Resources
   https://github.com/CryoByte33/steam-deck-utilities
@@ -52,3 +60,4 @@ Good links and Resources
   https://www.reddit.com/r/SteamDeckTricks/comments/wfx3wk/fix_for_bluetooth_devices_not_reconnecting/
   https://www.svg.com/1115238/how-to-fix-your-steam-deck-download-speeds/#
   https://gist.github.com/sanyer/ce815296bc4fac38752673d20e7fb3f2
+  https://flathub.org/apps/com.jetbrains.PyCharm-Community
